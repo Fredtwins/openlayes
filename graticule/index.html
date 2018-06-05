@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<link rel="stylesheet" href="../css/ol.css" type="text/css">
+		<script src="../js/ol.js" type="text/javascript"></script>
+		<title>OpenLayers 3 example</title>
+	</head>
+
+	<body>
+		<div id="map" class="map"></div>
+		<script type="text/javascript">
+			var layerBase = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			});
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [layerBase],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 9,
+					maxZoom: 18,
+					minZoom: 0,
+					projection: 'EPSG:4326'
+				})
+			});
+			
+//			let arr [
+//				[112.89413452148439, 23.27178955078125],
+//				[113.06167602539064, 23.13446044921875],
+//				[112.87490844726564, 23.1097412109375],
+//				[112.94631958007814, 23.27178955078125],
+//				[112.80075073242189, 22.9119873046875],
+//				[112.84744262695314, 23.126220703125],
+//				[113.13858032226564, 23.20587158203125]
+//			];
+//			
+//			let featureArr = [];
+//			
+//			for (let i = 0;i < arr.length;i++) {
+//				
+//			}
+
+			var graticuleLayer = new ol.Graticule({
+				map: map,
+//				maxLat: 23.57391357421875,
+//				maxLon: 113.43246459960939,
+//				minLat: 22.67852783203125,
+//				minLon: 112.38052368164064,
+//				lonLabelFormatter: function() {
+//					return [112.38052368164064, 113.43246459960939]
+//				},
+				strokeStyle: new ol.style.Stroke({
+					color: 'rgba(12, 12, 12, 0.8)',
+					width: 0.6
+				}),
+				targetSize: 100
+			});
+						console.log(graticuleLayer)
+//						map.addLayer(graticuleLayer);
+
+			function mapInfo(pixel, e) {
+				let lng = e.coordinate[0];
+				let lat = e.coordinate[1];
+				let featrues = [];
+				let layerNames = [];
+				console.log(lng, lat)
+				
+				map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+					featrues.push(feature);
+					if(layer) {
+						layerNames.push(layer.get("name") == null ? "" : layer.get('name'));
+					}
+				})
+				if(featrues.length) {
+					
+				}
+			}
+
+			map.on('singleclick', function(e) {
+				mapInfo(e.pixel, e)
+			})
+		</script>
+	</body>
+
+</html>

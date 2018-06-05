@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/ol.css" />
+		<style type="text/css">
+			.warpper {
+				/*background: rgba(255, 0, 0, 0.2);
+				border-radius: 50%;
+				height: 14px;
+				width: 14px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: 11px 0px 0px -12px;
+				transform: rotateX(55deg);
+				z-index: 100;*/
+				position: relative;
+			}
+			.warpper:after {
+				/*position: relative;*/
+				/*content: "";
+				border-radius: 50%;
+				height: 40px;
+				width: 40px;
+				position: absolute;
+				margin: -13px 0 0 -13px;
+				animation: pulsate 1s ease-out;
+				animation-iteration-count: infinite;
+				opacity: 0.0;
+				box-shadow: 0 0 1px 2px red;*/
+			}
+			
+			.div1 {
+				width: 30px;
+				height: 30px;
+				border-radius: 50% 50% 50% 0;
+				background: red;
+				position: absolute;
+				transform: rotate(-45deg);
+				left: 50%;
+				top: 50%;
+				margin: -20px 0 0 -20px;
+				z-index: 101;
+			}
+			
+			.div1:after {
+				content: '';
+				width: 14px;
+				height: 14px;
+				margin: 8px 0 0 8px;
+				background: white;
+				position: absolute;
+				border-radius: 50%;
+			}
+			/*.div1 {
+				position: relative;
+				z-index: 102;
+			}*/
+			
+			.div2 {
+				background: rgba(255, 0, 0, 0.2);
+				border-radius: 50%;
+				height: 14px;
+				width: 14px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: 11px 0px 0px -12px;
+				transform: rotateX(55deg);
+				z-index: 100;
+			}
+			
+			.div2:after {
+				content: "";
+				border-radius: 50%;
+				height: 40px;
+				width: 40px;
+				position: absolute;
+				margin: -13px 0 0 -13px;
+				animation: pulsate 1s ease-out;
+				animation-iteration-count: infinite;
+				opacity: 0.0;
+				box-shadow: 0 0 1px 2px red;
+			}
+			
+			@keyframes pulsate {
+				0% {
+					transform: scale(0.1, 0.1);
+					opacity: 0.0;
+				}
+				50% {
+					opacity: 1.0;
+				}
+				100% {
+					transform: scale(1.2, 1.2);
+					opacity: 0;
+				}
+			}
+			
+			@keyframes bounce {
+				0% {
+					opacity: 0;
+					transform: translateY(-2000px) rotate(-45deg);
+				}
+				60% {
+					opacity: 1;
+					transform: translateY(30px) rotate(-45deg);
+				}
+				80% {
+					transform: translateY(-10px) rotate(-45deg);
+				}
+				100% {
+					transform: translateY(0) rotate(-45deg);
+				}
+			}
+			/*.div1 {
+				width: 100%;
+				height: 100%;
+				border-radius: 50px;
+				border: 2px solid red;
+				position: absolute;
+				left: 0;
+				top: 0;
+				box-sizing: border-box;
+				background: -webkit-radial-gradient(rgba(255, 0, 0, 0.9) 0%, rgba(255, 0, 0, 0.2) 10%, rgba(255, 0, 0, 0.15) 30%, rgba(255, 0, 0, 0.10) 50%, rgba(255, 0, 0, 0.05) 70%, rgba(255, 0, 0, 0) 90%);
+				animation: keyname1 1s ease-in infinite;
+			}
+			.div2 {
+				width: 100%;
+				height: 100%;
+				border-radius: 50px;
+				border: 2px solid red;
+				position: absolute;
+				left: 0;
+				top: 0;
+				box-sizing: border-box;
+				background: -webkit-radial-gradient(rgba(255, 0, 0, 0.9) 0%, rgba(255, 0, 0, 0.2) 10%, rgba(255, 0, 0, 0.15) 30%, rgba(255, 0, 0, 0.10) 50%, rgba(255, 0, 0, 0.05) 70%, rgba(255, 0, 0, 0) 90%);
+				animation: keyname2 1s ease-in infinite;
+				opacity: 0;
+			}
+			
+			@keyframes keyname1{
+				0%{
+					transform: scale(1);
+				}
+				100%{
+					transform: scale(0.2);
+				}
+			}
+			@keyframes keyname2{
+				0%{
+					opacity: 0;
+				}
+				80%{
+					opacity: 0.5;
+				}
+				100% {
+					opacity: 0.8;
+				}
+			}*/
+		</style>
+		<script src="../js/ol.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="map"></div>
+		<button onclick="aa()">修改</button>
+		<script type="text/javascript">
+			var base = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			})
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [base],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 8,
+					maxZoom: 18,
+					minZoom: 1,
+					projection: 'EPSG:4326'
+				})
+			})
+
+			var iconFeatures = [];
+			var iconFeature = new ol.Feature(new ol.geom.Point([113.107406294, 23.257379032]));
+
+			iconFeature.set('style', new ol.style.Style({
+				image: new ol.style.Icon(({
+					anchor: [0, -0.1],
+					src: './images/waterpipeup.png'
+				}))
+			}))
+
+			iconFeature.set('name', 'icon');
+			iconFeatures.push(iconFeature);
+
+			// 
+			var iconLayer = new ol.layer.Vector({
+				style: function(feature) {
+					return feature.get('style');
+				},
+				source: new ol.source.Vector({
+					features: iconFeatures
+				}),
+				name: "iconLayer",
+				zIndex: 102
+			});
+			map.addLayer(iconLayer)
+
+			let warpper = document.createElement('div');
+			// console.log(warpper);
+			warpper.className = 'warpper';
+
+			warpper.innerHTML = '<div class="div1"></div><div class="div2"></div>';
+
+			//坐标标注
+			let overlay = new ol.Overlay({
+				element: warpper,
+				// position: [113.07231903076172, 23.082618713378906],
+				position: [113.060302734375, 22.93567657470703],
+//				offset: [0, -5],
+				stopEvent: false,
+				autoPan: true,
+				zIndex: 101
+			})
+			// console.log(overlay.U.position)
+			// map.addOverlay(overlay)
+
+			function aa() {
+				setInterval(() => {
+				// console.log(666)
+					let arr = [113.13 + Math.random(), 23.082618713378906 + Math.random()];
+					iconFeature.setGeometry(new ol.geom.Point(arr))
+				}, 1000)
+			}
+
+			//			var supplySource = new ol.source.Vector({
+			//				url:"./geojson/geojson_dali_nanhai_current_water_pipe.json",
+			////    			url: "./geojson/geojson.json",
+			//				format: new ol.format.GeoJSON(),
+			//				wrapX: false
+			//			})	//画图引入路径
+			//			
+			//			var  supplyLayer = new ol.layer.Vector({
+			//				source: supplySource,		//把图引入
+			//				style: [new ol.style.Style({		//设置该layer的样式
+			//					stroke: new ol.style.Stroke({
+			//						color: 'red',
+			//						width: 5
+			//					})
+			//				})],
+			//				name: "supply"		//为该layer设置名字
+			//			})
+			//			
+			//			map.addLayer(supplyLayer)
+			//			
+			//			var overImg = document.createElement("img");
+			//			overImg.setAttribute("src","./images/pumpopen.gif");
+			//			var imgLayer1 = new ol.Overlay({
+			//				element: overImg,
+			//				stopEvent: false,
+			//				position: [113.0445, 23.0907],
+			//				name: "imgLayer1"
+			//			})
+			//			map.addOverlay(imgLayer1)
+
+			function mapInfo(pixel, e) {
+				var featrues = [];
+				var layerNames = [];
+				// console.log(pixel)
+				map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+					featrues.push(feature);
+					if(layer) {
+						layerNames.push(layer.get("name") == null ? "" : layer.get('name'));
+					}
+				})
+				if(featrues.length) {
+					// console.log(layerNames)
+					switch(layerNames[0]) {
+						case 'iconLayer':
+							console.log("iconLayer");
+							break;
+						case 'supply':
+							console.log("supply");
+							break;
+						case "imgLayer1":
+							console.log("imgLayer1");
+							break;
+					}
+				}
+			}
+
+			map.on('singleclick', function(e) {
+				// var that = this;
+				// console.log(e)
+				mapInfo(e.pixel, e)
+				this.overlay = [e.coordinate[0] , e.coordinate[1]]
+				console.log(this.overlay)
+				iconFeature.setGeometry(new ol.geom.Point(this.overlay))
+			})
+		</script>
+	</body>
+
+</html>

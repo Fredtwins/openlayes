@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <name>2012 Earthquakes, Magnitude 5</name>
+        <atom:author>
+            <atom:name>U.S. Geological Survey</atom:name>
+        </atom:author>
+        <atom:link href="http://earthquake.usgs.gov"/>
+        <Folder>
+            <name>Magnitude 5</name>
+            <Placemark>
+                <name>74523</name>
+                <Point>
+                    <coordinates>113.0445, 23.0907, 0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>63214</name>
+                <Point>
+                    <coordinates>-178.549,-17.968, 0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>30652</name>
+                <Point>
+                    <coordinates>-84.121,9.183, 0</coordinates>
+                </Point>
+            </Placemark>
+        </Folder>
+    </Document>
+</kml>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<link rel="stylesheet" href="../css/ol.css" type="text/css">
+		<script src="../js/ol.js" type="text/javascript"></script>
+		<script src="../js/jquery-2.2.4.min.js" type="text/javascript"></script>
+		<title>OpenLayers 3 example</title>
+	</head>
+
+	<body>
+		<div id="map" class="map"></div>
+		<script type="text/javascript">
+			var layerBase = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			});
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [layerBase],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 5,
+					maxZoom: 18,
+					minZoom: 0,
+					projection: 'EPSG:4326'
+				})
+			});
+
+			var iconFeatures = [];
+			var iconFeature = new ol.Feature(new ol.geom.Point([113.083, 23.036]));
+			iconFeature.set('extent', [112.657, 22.69280000000001, 113.509, 23.3792]);
+			iconFeature.set('style', new ol.style.Style({
+				image: new ol.style.Icon(({
+//					anchor: [0, -0.1],
+					src: './images/Layer0.png',
+					scale: 0.8
+				}))
+			}));
+			iconFeature.set('name', 'icon');
+			iconFeatures.push(iconFeature);
+
+			icon_layer = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          url: 'http://image.data.cma.cn/vis/IMG_SATA_SATE_GEO_IMAGE_LATLON_F2E/20171225/SATE_L2_F2E_VISSR_MWB_OTG_SEC-IR1-201712250130.AWX.png',
+					imageExtent: [50, 0, 145, 60]
+        }),
+        opacity: 0.3
+			});
+
+			map.addLayer(icon_layer);
+		</script>
+	</body>
+
+</html>

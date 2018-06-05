@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/ol.css" />
+		<!--<script src="../js/ol-debug.js" type="text/javascript" charset="utf-8"></script>-->
+		<script src="../js/ol.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="map"></div>
+		<script type="text/javascript">
+			var base = new ol.layer.Tile({
+			 	source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			}); //引入该地图
+
+			var supplySource = new ol.source.Vector({
+				url: "./geojson/geojson_dali_nanhai_current_water_pipe.json",
+				//    			url: "./geojson/geojson.json",
+				format: new ol.format.GeoJSON(),
+				wrapX: false
+			}) //画图引入路径
+
+			var supplyLayer = new ol.layer.Vector({
+				source: supplySource, //把图引入
+				style: [new ol.style.Style({ //设置该layer的样式
+					stroke: new ol.style.Stroke({
+						color: 'red',
+						width: 5
+					})
+				})],
+				name: "supply" //为该layer设置名字
+			}) //创建layer
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}), //control层
+				target: 'map',
+				layers: [base], //layer层
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 10,
+					maxZoom: 18,
+					minZoom: 10,
+					projection: 'EPSG:4326'
+				}) //view层
+			}) //实例化地图
+
+			map.addLayer(supplyLayer)
+
+			var displayFeatureInfo = function(pixel, e) {
+				var features = [];
+				var layerNames = [];
+				map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+					features.push(feature);
+					if(layer) {
+						layerNames.push(layer.get("name") == null ? "" : layer.get("name"));
+					}
+				})
+				if(features.length > 0) {
+					switch(layerNames[0]) {
+						case "supply":
+							supplySource.getFeatures().map(item => {
+								item.setStyle([new ol.style.Style({ //设置该layer的样式
+									stroke: new ol.style.Stroke({
+										color: 'red',
+										width: 5
+									})
+								})])
+							})
+							features[0].setStyle([new ol.style.Style({ //设置该layer的样式
+								stroke: new ol.style.Stroke({
+									color: 'yellow',
+									width: 5
+								})
+							})])
+							break;
+					}
+				}else {
+					supplySource.getFeatures().map(item => {
+						item.setStyle([new ol.style.Style({ //设置该layer的样式
+							stroke: new ol.style.Stroke({
+								color: 'red',
+								width: 5
+							})
+						})])
+					})
+				}
+			}
+
+			map.on('pointermove', function(e) {
+				displayFeatureInfo(e.pixel, e)
+			})
+
+			//			map.on('singleclick', function(e) {
+			//				displayFeatureInfo(e.pixel, e)
+			//				//				console.log(e)
+			//			})
+		</script>
+	</body>
+
+</html>

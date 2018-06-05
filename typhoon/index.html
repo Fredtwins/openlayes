@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<!--<link rel="stylesheet" href="../css/ol.css" type="text/css">
+		<script src="../js/ol.js" type="text/javascript"></script>-->
+		<!--<link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">-->
+		<!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+		<!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.5.0/build/ol.js"></script>-->
+		<style>
+			html,
+			body,
+			#map {
+				padding: 0;
+				margin: 0;
+				height: 100%;
+				width: 100%;
+				overflow: hidden;
+			}
+			
+			.color {
+				position: absolute;
+				top: 20px;
+				width: 20px;
+				height: 500px;
+				background: linear-gradient(#ff0000, #ffff00, #00ff00, #00e4ff, #5a00ff);
+			}
+		</style>
+		<script src="../js/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/ol.js" type="text/javascript"></script>
+		<!--<script src="../js/flash-maker.js" type="text/javascript" charset="utf-8"></script>-->
+		<!--<script src="../js/heatmap.js" type="text/javascript"></script>
+		<script src="../js/heatmap-openlayers.js" type="text/javascript"></script>-->
+		<title>OpenLayers 3 example</title>
+	</head>
+
+	<body>
+		<div id="map"></div>
+		<div class="color"></div>
+		<!--<button onclick="buttonClick()">button</button>-->
+		<script type="text/javascript">
+			var wktformat = new ol.format.WKT();
+			var Configs = {
+				CIRCLE_CENTER_X: 113.0445,
+				CIRCLE_CENTER_Y: 23.0907,
+				CIRCLE_R: {
+					"SE": 120 / 10,
+					"NE": 100 / 10,
+					"NW": 80 / 10,
+					"SW": 100 / 10
+				}
+			};
+			var wkt = "POLYGON((";
+			var wkt0 = "",
+				_interval = 1;
+			for(var i = 0; i < 360 / _interval; i++) {
+				var _r = 1;
+				var _ang = i * _interval;
+				if(_ang > 0 && _ang <= 90) {
+					_r = Configs.CIRCLE_R.NE;
+				} else if(_ang > 90 && _ang <= 180) {
+					_r = Configs.CIRCLE_R.NW;
+				} else if(_ang > 180 && _ang <= 270) {
+					_r = Configs.CIRCLE_R.SW;
+				} else {
+					_r = Configs.CIRCLE_R.SE;
+				}
+
+				var x = Configs.CIRCLE_CENTER_X + _r * Math.cos(_ang * 3.14 / 180);
+				var y = Configs.CIRCLE_CENTER_Y + _r * Math.sin(_ang * 3.14 / 180);
+
+				wkt = wkt + "" + x + " " + y + ", ";
+				if(i === 0) {
+					wkt0 = "" + x + " " + y + "";
+				}
+			}
+			wkt = wkt + wkt0 + "))";
+			var features = new Array();
+			features.push(wktformat.readFeature(wkt));
+			features.push(wktformat.readFeature("POINT(" + Configs.CIRCLE_CENTER_X + " " + Configs.CIRCLE_CENTER_Y + ")"));
+
+			var styleFunc = function(feature, resolution) {
+				var index = feature.get("index");
+				return new ol.style.Style({
+					fill: new ol.style.Fill({
+						color: 'rgba(255, 0, 0, 0.2)'
+					}),
+					stroke: new ol.style.Stroke({
+						color: '#ffcc33',
+						width: 2
+					}),
+					image: new ol.style.Circle({
+						radius: 4,
+						fill: new ol.style.Fill({
+							color: '#ff0000'
+						})
+					})
+				});
+			};
+			var vector = new ol.layer.Vector({
+				source: new ol.source.Vector({
+					features: features
+				}),
+				style: styleFunc
+			});
+
+			var layerBase = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			});
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [layerBase, vector],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 5,
+					projection: 'EPSG:4326'
+				})
+			});
+			
+			console.log(WebSocket)
+//			var a;
+//			setTimeout(() => {
+//				a = new FlashMarker(map, [{
+//					name: '北京',
+//					lnglat: [113.0445, 23.0907],
+//					color: 'red',
+//					type: 'circle',
+//					speed: 0.5
+//				}, {
+//					name: '北京',
+//					lnglat: [113.1445, 23.0907],
+//					color: 'red',
+//					type: 'circle',
+//					speed: 0.5
+//				}]);
+//			}, 20)
+//
+//			function buttonClick() {
+//				console.log(a)
+//			}
+		</script>
+	</body>
+
+</html>

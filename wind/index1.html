@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/ol.css" />
+		<style type="text/css">
+			.warpper {
+				/*background: rgba(255, 0, 0, 0.2);
+				border-radius: 50%;
+				height: 14px;
+				width: 14px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: 11px 0px 0px -12px;
+				transform: rotateX(55deg);
+				z-index: 100;*/
+				position: relative;
+			}
+			
+			.warpper:after {
+				/*position: relative;*/
+				/*content: "";
+				border-radius: 50%;
+				height: 40px;
+				width: 40px;
+				position: absolute;
+				margin: -13px 0 0 -13px;
+				animation: pulsate 1s ease-out;
+				animation-iteration-count: infinite;
+				opacity: 0.0;
+				box-shadow: 0 0 1px 2px red;*/
+			}
+			
+			.div1 {
+				width: 30px;
+				height: 30px;
+				border-radius: 50% 50% 50% 0;
+				background: red;
+				position: absolute;
+				transform: rotate(-45deg);
+				left: 50%;
+				top: 50%;
+				margin: -20px 0 0 -20px;
+				z-index: 101;
+			}
+			
+			.div1:after {
+				content: '';
+				width: 14px;
+				height: 14px;
+				margin: 8px 0 0 8px;
+				background: white;
+				position: absolute;
+				border-radius: 50%;
+			}
+			/*.div1 {
+				position: relative;
+				z-index: 102;
+			}*/
+			
+			.div2 {
+				background: rgba(255, 0, 0, 0.2);
+				border-radius: 50%;
+				height: 14px;
+				width: 14px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: 11px 0px 0px -12px;
+				transform: rotateX(55deg);
+				z-index: 100;
+			}
+			
+			.div2:after {
+				content: "";
+				border-radius: 50%;
+				height: 40px;
+				width: 40px;
+				position: absolute;
+				margin: -13px 0 0 -13px;
+				animation: pulsate 1s ease-out;
+				animation-iteration-count: infinite;
+				opacity: 0.0;
+				box-shadow: 0 0 1px 2px red;
+			}
+			
+			@keyframes pulsate {
+				0% {
+					transform: scale(0.1, 0.1);
+					opacity: 0.0;
+				}
+				50% {
+					opacity: 1.0;
+				}
+				100% {
+					transform: scale(1.2, 1.2);
+					opacity: 0;
+				}
+			}
+			
+			@keyframes bounce {
+				0% {
+					opacity: 0;
+					transform: translateY(-2000px) rotate(-45deg);
+				}
+				60% {
+					opacity: 1;
+					transform: translateY(30px) rotate(-45deg);
+				}
+				80% {
+					transform: translateY(-10px) rotate(-45deg);
+				}
+				100% {
+					transform: translateY(0) rotate(-45deg);
+				}
+			}
+			/*.div1 {
+				width: 100%;
+				height: 100%;
+				border-radius: 50px;
+				border: 2px solid red;
+				position: absolute;
+				left: 0;
+				top: 0;
+				box-sizing: border-box;
+				background: -webkit-radial-gradient(rgba(255, 0, 0, 0.9) 0%, rgba(255, 0, 0, 0.2) 10%, rgba(255, 0, 0, 0.15) 30%, rgba(255, 0, 0, 0.10) 50%, rgba(255, 0, 0, 0.05) 70%, rgba(255, 0, 0, 0) 90%);
+				animation: keyname1 1s ease-in infinite;
+			}
+			.div2 {
+				width: 100%;
+				height: 100%;
+				border-radius: 50px;
+				border: 2px solid red;
+				position: absolute;
+				left: 0;
+				top: 0;
+				box-sizing: border-box;
+				background: -webkit-radial-gradient(rgba(255, 0, 0, 0.9) 0%, rgba(255, 0, 0, 0.2) 10%, rgba(255, 0, 0, 0.15) 30%, rgba(255, 0, 0, 0.10) 50%, rgba(255, 0, 0, 0.05) 70%, rgba(255, 0, 0, 0) 90%);
+				animation: keyname2 1s ease-in infinite;
+				opacity: 0;
+			}
+			
+			@keyframes keyname1{
+				0%{
+					transform: scale(1);
+				}
+				100%{
+					transform: scale(0.2);
+				}
+			}
+			@keyframes keyname2{
+				0%{
+					opacity: 0;
+				}
+				80%{
+					opacity: 0.5;
+				}
+				100% {
+					opacity: 0.8;
+				}
+			}*/
+		</style>
+		<script src="../js/ol.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="map"></div>
+
+		<script type="text/javascript">
+			var base = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			})
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [base],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 8,
+					maxZoom: 18,
+					minZoom: 1,
+					projection: 'EPSG:4326'
+				})
+			})
+
+			map.getView().on('propertychange', (e) => {
+				var zoom = map.getView().getZoom();
+				console.log(zoom)
+				
+				for (var i = 0;i < iconArr.length;i++) {
+					iconArr[i].setScale(zoom * 0.08)
+				}
+			});
+			
+			var iconArr = [];
+
+			function createImg(res) {
+				//				var arr = [];
+				//				for (var i = 0;i < res.length;i++) {
+				//					arr.push(new ol.layer.Image({
+				//		        source: new ol.source.ImageStatic({
+				//		          url: './windIcon/' + res[i].level + '/' + res[i].level + '_' + res[i].wd10 + '.png',
+				//							imageExtent: res[i].pic_extent,
+				////							imageSize: [200, 200]
+				//		        })
+				//					}))
+				//				}
+				//				return arr;
+				console.log(res)
+				var iconFeatures = [];
+				for(var i = 0; i < res.length; i++) {
+					var icon = new ol.style.Icon(({
+						//					anchor: [0, -0.1],
+						src: './windIcon/' + res[i].level + '/' + res[i].level + '_' + res[i].wd10 + '.png',
+						scale: 1
+					}))
+					iconArr.push(icon)
+					var iconFeature = new ol.Feature(new ol.geom.Point([res[i].lng, res[i].lat]));
+					iconFeature.set('style', new ol.style.Style({
+						image: icon
+					}));
+					iconFeatures.push(iconFeature);
+				}
+				return iconFeatures;
+			}
+
+			function createFeaturesLayer(name, features) {
+				return new ol.layer.Vector({
+					style: function(feature) {
+						return feature.get('style');
+					},
+					source: new ol.source.Vector({
+						features: features
+					}),
+					name: name
+				});
+			}
+			
+			$.ajax({
+				type: "get",
+				url: "http://192.168.1.189:8888/ReqMode24Service?mode=rain5m&area=nanhai",
+//				url: "http://192.168.1.189:8888/ReqMode24Service?mode=temp5m&area=nanhai",
+				async: true,
+				success: function(res) {
+					console.log(res)
+//					var arr = createImg(res.contents);
+					//					for(var i = 0; i < arr.length; i++) {
+//					var layer = createFeaturesLayer('aa', arr);
+//					map.addLayer(layer);
+
+					//					}
+				}
+			});
+
+//			$.ajax({
+//				type: "get",
+//				url: "http://192.168.1.189:8888/ReqWindbarGraphService?mode=wind10m",
+//				async: true,
+//				success: function(res) {
+//					var arr = createImg(res.contents);
+//					//					for(var i = 0; i < arr.length; i++) {
+//					var layer = createFeaturesLayer('aa', arr);
+//					map.addLayer(layer);
+//
+//					//					}
+//				}
+//			});
+		</script>
+	</body>
+
+</html>

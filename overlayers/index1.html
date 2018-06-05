@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/ol.css" />
+		<script src="../js/ol-debug.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div id="map"></div>
+		<script type="text/javascript">
+			var mapBase = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://121.201.61.249:6080/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			})
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: "map",
+				layers: [mapBase],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 11,
+					maxZoom: 18,
+					minZoom: 10,
+					projection: 'EPSG:4326'
+				})
+			})
+
+			var overImg = document.createElement("img");
+			overImg.setAttribute("src", "./images/pumpopen.gif");
+			var imgLayer1 = new ol.Overlay({
+				element: overImg,
+				stopEvent: false,
+				position: [113.0445, 23.0907],
+				id: "321"
+			})
+			map.addOverlay(imgLayer1)
+
+			function overInfo(pixel, e) {
+				var overlayers = [];
+				var overlayerName = [];
+				map.forEachLayerAtPixel(pixel, function(feature, layer) {
+					console.log(feature)
+					overlayers.push(feature);
+					if(layer) {
+						overlayerName.push(layer.get('name') == null ? "" : layer.get('name'));
+
+					}
+				})
+				if(overlayers.length > 0) {
+					switch(overlayerName[0]) {
+						case 'imgLayer1':
+							console.log("imgLayer1");
+							break;
+					}
+				}
+			}
+
+			map.on('singleclick', function(e) {
+				console.log(e.map.overlays_.array_)
+				console.log(this.getOverlays())
+//				console.log(this.GetFeatureInfo())
+			})
+		</script>
+	</body>
+
+</html>

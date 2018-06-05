@@ -1,0 +1,104 @@
+
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<!--<link rel="stylesheet" href="../css/ol.css" type="text/css">
+		<script src="../js/ol.js" type="text/javascript"></script>-->
+		<!--<link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">-->
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <!--<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.5.0/build/ol.js"></script>-->
+		<style>
+			html,
+			body,
+			#map {
+				padding: 0;
+				margin: 0;
+				height: 100%;
+				width: 100%;
+				overflow: hidden;
+			}
+		</style>
+		<script src="../js/jquery-2.2.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/ol.js" type="text/javascript"></script>
+		<!--<script src="../js/heatmap.js" type="text/javascript"></script>
+		<script src="../js/heatmap-openlayers.js" type="text/javascript"></script>-->
+		<title>OpenLayers 3 example</title>
+	</head>
+
+	<body>
+		<div id="map"></div>
+		<script type="text/javascript">
+			$.ajax({
+				type:"get",
+				url:"http://10.168.80.9:8082/fullservice/http/peopleHeadHot",
+				success: function (res) {
+					var vector = new ol.layer.Heatmap({
+//						source: new ol.source.Vector(),
+						source: new ol.source.Vector({
+				          url: 'https://openlayers.org/en/v4.5.0/examples/data/kml/2012_Earthquakes_Mag5.kml',
+				          format: new ol.format.KML({
+				            extractStyles: false
+				          })
+				        }),
+						blur: 60,
+		        		radius: 30
+					});
+					
+					vector.getSource().on('addfeature', function(event) {
+				        // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+				        // standards-violating <magnitude> tag in each Placemark.  We extract it from
+				        // the Placemark's name instead.
+				        var name = event.feature.get('name');
+				        var magnitude = parseFloat(name.substr(2));
+				        event.feature.set('weight', magnitude - 5);
+				      });
+					
+//					vector.on('change:source', function(event) {
+				        // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+				        // standards-violating <magnitude> tag in each Placemark.  We extract it from
+				        // the Placemark's name instead.
+//				        console.log(event.target.get('source').getFeatures())
+//				        event.target.get(event.key).getFeatures().map(item => {
+//				        	console.log(item.get('name'))
+//				        	item.set('weight', item.get('name') / 100000)
+//				        })
+//				        var name = event.feature.get('name');
+//				        event.feature.set('weight', name / 1000);
+//				    });
+				    
+//				    vector.setSource(new ol.source.Vector({
+//						features: (new ol.format.KML({
+//							extractStyles: false
+//						})).readFeatures(res.result[0].kml, {
+//							dataProjection: 'EPSG:4326',
+//							featureProjection: 'EPSG:4326'
+//						})
+//					}))
+		
+					var layerBase = new ol.layer.Tile({
+						source: new ol.source.TileArcGISRest({
+							url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+						})
+					});
+		
+					var map = new ol.Map({
+						controls: ol.control.defaults({
+							attribution: false
+						}),
+						target: 'map',
+						layers: [layerBase, vector],
+						view: new ol.View({
+							center: [113.0445, 23.0907],
+							zoom: 11,
+							projection: 'EPSG:4326'
+						})
+					});
+				}
+			});
+			
+		</script>
+	</body>
+
+</html>

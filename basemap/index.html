@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../css/ol.css" type="text/css">    
+    <script src="../js/ol.js" type="text/javascript"></script>
+    <title>OpenLayers 3 example</title>    
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+//http://127.0.0.1:8090/http/map?z=11&x=1666&y=1159&times=1&time=1512982836353
+     var gaodeMapLayer = new ol.layer.Tile({  
+        source: new ol.source.XYZ({  
+            url: 'http://192.168.1.120:8090/http/map?z={z}&x={x}&y={y}&times=1&time=1512982836355'
+//          url: 'http://rtt2b.map.qq.com/rtt/?z={z}&x={x}&y={y}&times=1&time=1512982836355'
+        })  
+    }); 
+    
+    var road = new ol.layer.Tile({
+		source: new ol.source.TileArcGISRest({
+			url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/guangdong_road_normal/MapServer"
+		})
+	});
+
+var layerBase = new ol.layer.Tile({
+						source: new ol.source.TileArcGISRest({
+							url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+						})
+					});
+
+      var map = new ol.Map({
+				controls: ol.control.defaults().extend([
+//          new ol.control.FullScreen(),
+//          new ol.control.MousePosition(),
+//          new ol.control.OverviewMap(),
+            new ol.control.ScaleLine(),
+            new ol.control.ZoomSlider(),
+//          new ol.control.ZoomToExtent()
+        ]),
+				target: 'map',
+				layers: [layerBase, road, gaodeMapLayer],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 11,
+//					maxZoom: 18,
+//					minZoom: 10,
+					projection: 'EPSG:4326'
+				})
+			});
+      
+    </script>
+  </body>
+</html>

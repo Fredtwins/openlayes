@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="../css/ol.css" type="text/css">
+		<script src="../js/ol.js" type="text/javascript"></script>
+		<title>OpenLayers 3 example</title>
+	</head>
+
+	<body>
+		<div id="map" class="map"></div>
+		<button id="writeFeature">打印geojson</button>
+		<button id="deleteFeature">删除</button>
+		<form id="options-form" automplete="off">
+			<div class="radio">
+				<label>
+          <input type="radio" name="interaction" value="draw" id="draw" checked>
+          绘制 &nbsp;
+        </label>
+			</div>
+			<div class="radio">
+				<label>
+          <input type="radio" name="interaction" value="modify">
+          修改 &nbsp;
+        </label>
+			</div>
+			<div class="form-group">
+				<label>Draw type &nbsp;</label>
+				<select name="draw-type" id="draw-type">
+					<option value="Point">点</option>
+					<option value="LineString">线段</option>
+					<option value="Polygon">多边形</option>
+					<option value="Circle">圆形</option>
+					<option value="Square">任意矩形</option>
+					<option value="Box">矩形</option>
+				</select>
+			</div>
+		</form>
+		<script type="text/javascript">
+			var styles = {
+				'Point': [new ol.style.Style({
+					image: new ol.style.Circle({
+						radius: 7,
+						fill: new ol.style.Fill({
+							color: 'black'
+						})
+					})
+				})],
+				'LineString': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'green',
+						width: 10
+					})
+				})],
+				'MultiLineString': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'green',
+						width: 1
+					})
+				})],
+				'MultiPolygon': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'yellow',
+						width: 1
+					}),
+					fill: new ol.style.Fill({
+						color: 'rgba(255, 255, 0, 0.1)'
+					})
+				})],
+				'Polygon': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'blue',
+						lineDash: [4],
+						width: 3
+					}),
+					fill: new ol.style.Fill({
+						color: 'rgba(0, 0, 255, 0.1)'
+					})
+				})],
+				'GeometryCollection': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'magenta',
+						width: 2
+					}),
+					fill: new ol.style.Fill({
+						color: 'magenta'
+					}),
+					image: new ol.style.Circle({
+						radius: 10,
+						fill: null,
+						stroke: new ol.style.Stroke({
+							color: 'magenta'
+						})
+					})
+				})],
+				'Circle': [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: 'red',
+						width: 2
+					}),
+					fill: new ol.style.Fill({
+						color: 'rgba(255,0,0,0.2)'
+					})
+				})]
+			};
+			var styleFunction = function(feature, resolution) {
+				return styles[feature.getGeometry().getType()];
+			};
+
+			var layerBase = new ol.layer.Tile({
+				source: new ol.source.TileArcGISRest({
+					url: "http://202.105.25.138:20462/arcgis/rest/services/data_visualization/basemap_backgroud_normal/MapServer"
+				})
+			});
+
+			var supplySouce = new ol.source.Vector({
+				
+				wrapX: false
+			});
+			var supply_layer = new ol.layer.Vector({
+				source: supplySouce,
+				style: [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: '#7f00ff',
+						width: 5
+					})
+				})],
+				name: "supply",
+				style: styleFunction
+			});
+
+			var map = new ol.Map({
+				controls: ol.control.defaults({
+					attribution: false
+				}),
+				target: 'map',
+				layers: [layerBase],
+				view: new ol.View({
+					center: [113.0445, 23.0907],
+					zoom: 11,
+					maxZoom: 18,
+					minZoom: 10,
+					projection: 'EPSG:4326'
+				})
+			});
+
+			map.addLayer(supply_layer);
+
+			var selectFeature = {};
+			var Modify = {
+				init: function() {
+					this.select = new ol.interaction.Select();
+					map.addInteraction(this.select);
+					selectFeature = this.select;
+					this.modify = new ol.interaction.Modify({
+						features: this.select.getFeatures()
+					});
+					map.addInteraction(this.modify);
+
+					this.setEvents();
+				},
+				setEvents: function() {
+					var selectedFeatures = this.select.getFeatures();
+
+					this.select.on('change:active', function() {
+						selectedFeatures.forEach(selectedFeatures.remove, selectedFeatures);
+					});
+				},
+				setActive: function(active) {
+					this.select.setActive(active);
+					this.modify.setActive(active);
+				}
+			};
+			Modify.init();
+
+			var optionsForm = document.getElementById('options-form');
+
+			var Draw = {
+				init: function() {
+					map.addInteraction(this.Point);
+					this.Point.setActive(false);
+					map.addInteraction(this.LineString);
+					this.LineString.setActive(false);
+					map.addInteraction(this.Polygon);
+					this.Polygon.setActive(false);
+					map.addInteraction(this.Circle);
+					this.Circle.setActive(false);
+					map.addInteraction(this.Square);
+					this.Square.setActive(false);
+					map.addInteraction(this.Box);
+					this.Box.setActive(false);
+				},
+				Point: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('Point')
+				}),
+				LineString: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('LineString')
+				}),
+				Polygon: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('Polygon')
+				}),
+				Circle: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('Circle')
+				}),
+				Square: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('Circle'),
+					geometryFunction: ol.interaction.Draw.createRegularPolygon(4)
+				}),
+				Box: new ol.interaction.Draw({
+					source: supply_layer.getSource(),
+					type: /** @type {ol.geom.GeometryType} */ ('LineString'),
+					maxPoints: 2,
+					geometryFunction: function(coordinates, geometry) {
+						if(!geometry) {
+							geometry = new ol.geom.Polygon(null);
+						}
+						var start = coordinates[0];
+						var end = coordinates[1];
+						geometry.setCoordinates([
+							[start, [start[0], end[1]], end, [end[0], start[1]], start]
+						]);
+						return geometry;
+					}
+				}),
+				getActive: function() {
+					return this.activeType ? this[this.activeType].getActive() : false;
+				},
+				setActive: function(active) {
+					var type = optionsForm.elements['draw-type'].value;
+
+					if(active) {
+						this.activeType && this[this.activeType].setActive(false);
+						this[type].setActive(true);
+						this.activeType = type;
+					} else {
+						this.activeType && this[this.activeType].setActive(false);
+						this.activeType = null;
+					}
+				}
+			};
+			Draw.init();
+
+			optionsForm.onchange = function(e) {
+				var type = e.target.getAttribute('name');
+				var value = e.target.value;
+
+				if(type == 'draw-type') {
+					Draw.getActive() && Draw.setActive(true);
+				} else if(type == 'interaction') {
+					if(value == 'modify') {
+						Draw.setActive(false);
+						Modify.setActive(true);
+					} else if(value == 'draw') {
+						Draw.setActive(true);
+						Modify.setActive(false);
+					}
+				}
+			};
+
+			Draw.setActive(true);
+			Modify.setActive(false);
+
+			var snap = new ol.interaction.Snap({
+				source: supply_layer.getSource()
+			});
+			map.addInteraction(snap);
+
+			var writeFeature = document.getElementById('writeFeature');
+			writeFeature.onclick = function() {
+				var strs = new ol.format.GeoJSON().writeFeatures(supply_layer.getSource().getFeatures(), {
+					dataProjection: "EPSG:3857",
+					featureProjection: "EPSG:3857"
+				});
+				console.log(strs);
+			};
+
+			var deleteFeature = document.getElementById('deleteFeature');
+			deleteFeature.onclick = function() {
+				console.log(selectFeature.getFeatures().getArray())
+				for(var index = 0; index < selectFeature.getFeatures().getArray().length; index++) {
+					supply_layer.getSource().removeFeature(selectFeature.getFeatures().getArray()[index]);
+				}
+
+				Modify.setActive(false);
+				Modify.setActive(true);
+			};
+		</script>
+	</body>
+
+</html>
